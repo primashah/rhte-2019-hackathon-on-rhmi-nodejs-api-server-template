@@ -1,16 +1,20 @@
 import * as express from 'express';
 import * as env from 'env-var';
-import * as pino from 'pino';
-import * as path from 'path';
+import log from './log';
+import * as swaggerUi from 'swagger-ui-express';
+import junctionsRoute from './routes/junctions';
+
+let swaggerJson;
+try {
+  swaggerJson = require('../openapi-spec.json');
+} catch (e) {
+  console.error(
+    '\nERROR: please add your openapi-spec.json file to the root of the project\n'
+  );
+  process.exit(1);
+}
 
 const PORT = env.get('PORT', '8080').asPortNumber();
-const LOG_LEVEL = env
-  .get('LOG_LEVEL', 'debug')
-  .asEnum(Object.keys(pino.levels.values));
-
-const log = pino({
-  level: LOG_LEVEL
-});
 
 const app = express();
 
@@ -20,31 +24,20 @@ require('kube-probe')(app);
 
 // Include sensible security headers by default
 app.use(require('helmet')());
+
 // Log incoming requests
 app.use(require('morgan')('combined'));
 
-// Respond with an index.html file for the default route
+// Redirect to the api-docs by default
 app.get('/', (req: express.Request, res: express.Response) => {
-  res.sendFile(path.resolve('./views/index.html'));
+  res.redirect('/api-docs');
 });
 
-// Our "Hello, World" endpoint. Can be passed a querystring "name" parameter
-app.get('/api/hello', (req: express.Request, res: express.Response) => {
-  const name = req.query.name || 'World';
-  const message = `Hello, ${name}!`;
+// Setup an api-docs endpoint using swagger ui
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerJson));
 
-  log.debug(`returing message "${message}"`);
-
-  res.json({
-    message
-  });
-});
-
-// Support for health probes. Just return a "200 OK"
-app.get('/health', (req: express.Request, res: express.Response) => {
-  log.debug('responding to health probe');
-  res.end('ok');
-});
+// Mount a /junctions endpoint that uses the junctions router
+app.use('/junctions', junctionsRoute);
 
 app.listen(PORT, (err: any) => {
   if (err) {
