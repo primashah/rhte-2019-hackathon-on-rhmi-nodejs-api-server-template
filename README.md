@@ -8,6 +8,7 @@ To use this method of deployment you'll need:
 
 * Node.js v10 or later
 * An OpenShift instance
+* [OpenShift CLI(`oc`)](https://github.com/openshift/origin/releases/tag/v3.11.0)
 * An `openapi-spec.json` file
 
 Nodeshift is a neat CLI that simplifies deployment of Node.js applications on
