@@ -5,7 +5,7 @@
   "main": "src/server.js",
   "scripts": {
     "build": "tsc",
-    "nodeshift": "nodeshift",
+    "nodeshift": "nodeshift --expose",
     "format": "prettier --write --single-quote src/**/*.ts && git add .",
     "start": "node src/server.js",
     "start-dev": "nodemon -e ts -x ts-node src/server.ts | pino-pretty -t",
