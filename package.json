@@ -1,8 +1,9 @@
 {
-  "name": "rhte-2019-hackathon-on-rhmi-nodejs-api-server",
+  "name": "nodejs-city-api-server",
   "version": "0.1.0",
-  "description": "A sample TypeScript application that can be deployed on OpenShift",
+  "description": "A template to get started with the API development for Parking Meters and Junctions as part of the RHTE 2019 Hackathon on RHMI",
   "main": "src/server.js",
+  "private": true,
   "scripts": {
     "build": "tsc",
     "nodeshift": "nodeshift --expose",
