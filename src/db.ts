@@ -3,8 +3,10 @@ import * as env from 'env-var';
 import log from './log';
 
 const connectionString = env
-  .get('PG_CONNECTION_STRING')
-  .required()
+  .get(
+    'PG_CONNECTION_STRING',
+    'postgresql://evals08:Password1@localhost:5432/city-info'
+  )
   .asUrlString();
 
 const pool = new Pool({ connectionString });
@@ -16,6 +18,7 @@ const pool = new Pool({ connectionString });
  * @param params
  */
 export async function query<RowType>(sql: string, params?: any[]) {
+  log.debug('query connectionString:%s', connectionString);
   log.debug('query sql:%s', sql);
   log.debug('query params:%j', params);
 
